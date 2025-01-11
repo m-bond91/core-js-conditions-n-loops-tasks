@@ -513,12 +513,9 @@ function shuffleChar(str, iterations) {
     return position;
   }
 
-  let result = '';
+  let result = ' '.repeat(length);
   for (let i = 0; i < length; i += 1) {
     const finalPos = computeFinalPosition(i);
-    while (result.length < finalPos) {
-      result += ' ';
-    }
     result =
       result.substring(0, finalPos) + str[i] + result.substring(finalPos + 1);
   }
