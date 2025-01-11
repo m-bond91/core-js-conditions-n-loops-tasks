@@ -298,10 +298,9 @@ isContainNumber(123450, 0);
  */
 function getBalanceIndex(arr) {
   const n = arr.length;
-
+  if (n === 0) return -1;
   let leftSum = 0;
   let rightSum = 0;
-
   for (let i = 0; i < n; i += 1) {
     rightSum += arr[i];
   }
@@ -309,10 +308,13 @@ function getBalanceIndex(arr) {
   for (let i = 0; i < n; i += 1) {
     rightSum -= arr[i];
 
-    if (leftSum === rightSum) return i;
+    if (leftSum === rightSum) {
+      return i;
+    }
 
     leftSum += arr[i];
   }
+
   return -1;
 }
 getBalanceIndex([2, 3, 9, 5]);
@@ -501,25 +503,31 @@ function shuffleChar(str, iterations) {
   const { length } = str;
   if (length <= 1 || iterations === 0) return str;
 
-  const cache = {};
+  const cache = new Map();
 
-  function computeFinalPosition(startIndex) {
-    if (cache[startIndex] !== undefined) return cache[startIndex];
+  function computeFinalPosition(startIndex, remainingIterations) {
     let position = startIndex;
-    for (let i = 0; i < iterations; i += 1) {
+    let remaining = remainingIterations;
+
+    const cacheKey = `${startIndex}-${remainingIterations}`;
+    if (cache.has(cacheKey)) return cache.get(cacheKey);
+
+    while (remaining > 0) {
       if (position % 2 === 0) {
         position /= 2;
       } else {
         position = Math.floor(length / 2) + (position - 1) / 2;
       }
+      remaining -= 1;
     }
-    cache[startIndex] = position;
+
+    cache.set(cacheKey, position);
     return position;
   }
 
   let result = ' '.repeat(length);
   for (let i = 0; i < length; i += 1) {
-    const finalPos = computeFinalPosition(i);
+    const finalPos = computeFinalPosition(i, iterations);
     result =
       result.substring(0, finalPos) + str[i] + result.substring(finalPos + 1);
   }
