@@ -501,7 +501,10 @@ function shuffleChar(str, iterations) {
   const { length } = str;
   if (length <= 1 || iterations === 0) return str;
 
+  const cache = {};
+
   function computeFinalPosition(startIndex) {
+    if (cache[startIndex] !== undefined) return cache[startIndex];
     let position = startIndex;
     for (let i = 0; i < iterations; i += 1) {
       if (position % 2 === 0) {
@@ -510,6 +513,7 @@ function shuffleChar(str, iterations) {
         position = Math.floor(length / 2) + (position - 1) / 2;
       }
     }
+    cache[startIndex] = position;
     return position;
   }
 
@@ -543,48 +547,39 @@ shuffleChar('012345', 1);
  * @returns {number} The nearest larger number, or original number if none exists.
  */
 function getNearestBigger(number) {
-  const digits = [];
   let temp = number;
-
+  const digits = [];
   while (temp > 0) {
     digits.unshift(temp % 10);
     temp = Math.floor(temp / 10);
   }
-
   let i = digits.length - 2;
   while (i >= 0 && digits[i] >= digits[i + 1]) {
     i -= 1;
   }
-
   if (i < 0) {
     return number;
   }
-
   let j = digits.length - 1;
   while (digits[j] <= digits[i]) {
     j -= 1;
   }
-
-  const tempDigit = digits[i];
+  let tempDigit = digits[i];
   digits[i] = digits[j];
   digits[j] = tempDigit;
-
   let left = i + 1;
   let right = digits.length - 1;
-
   while (left < right) {
-    const swapTemp = digits[left];
+    tempDigit = digits[left];
     digits[left] = digits[right];
-    digits[right] = swapTemp;
+    digits[right] = tempDigit;
     left += 1;
     right -= 1;
   }
-
   let result = 0;
   for (let k = 0; k < digits.length; k += 1) {
     result = result * 10 + digits[k];
   }
-
   return result;
 }
 getNearestBigger(12345);
